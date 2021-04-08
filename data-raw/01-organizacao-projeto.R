@@ -12,7 +12,6 @@ devtools::load_all() # CURSO PACOTES
 readr::write_rds()
 usethis::use_data() # CURSO PACOTES
 
-usethis::use_git()
 
 usethis::use_git_config(
   user.name = "clente",

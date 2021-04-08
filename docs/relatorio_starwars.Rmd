@@ -1,0 +1,93 @@
+---
+title: 'Análise: Star Wars'
+author: "Carol Moreno"
+date: "07/04/2021"
+output: html_document
+---
+
+```{r}
+source("../R/tema_starwars.R")
+```
+
+
+Motivação: concluir a lição de casa do curso mesmo que a análise e o gráfico não sejam exatamente o que o Willy queria ver.
+
+Etapa 1: criei o projeto e vinculei ao Github.
+
+```{r eval=FALSE, warning=FALSE}
+
+usethis::create_project("analise_starwars")
+
+usethis::use_git()
+
+usethis::use_github()
+
+```
+
+
+Etapa 2: criei um objeto com os dados do df de Star Wars e criei uma pequena gambiarra pra fazer a contagem de quantas espécies aparecem para cada sexo (no fim, virou uma coluna meio inútil).
+
+```{r echo=TRUE, warning=FALSE}
+
+library(dplyr)
+
+
+df_starwars <- starwars %>% 
+  mutate(
+    contagem = case_when(
+      is.na(species) ~ 1,
+      T ~ 1
+    )
+  )
+
+df_analise <- df_starwars %>% 
+  filter(!is.na(sex) & !is.na(species)) %>% 
+  group_by(sex, species) %>% 
+    summarise(
+      contagem = sum(contagem)
+    ) %>%
+  select(sex, species, contagem)
+```
+
+Etapa 3: Peguei o script do ggplot do Willy e fucei um pouco para ver o que saía. Acabei descobrindo que a maioria das espécies de personagens de Star Wars não tem nenhuma representante mulher (ou hermafrodita) na saga.
+
+E ainda salvei o Rmarkdown na pasta docs.
+
+```{r echo=TRUE, warning=FALSE}
+
+library(ggplot2)
+
+grafico <- df_analise %>% 
+  ggplot(aes(
+    x = sex,
+    y = species,
+    fill = contagem)
+  ) +
+  geom_point() +
+  labs(
+    x = "sexo",
+    y = "espécie",
+    title = "Igualdade de gênero das espécies de Star Wars"
+  ) +
+  theme(
+    text = element_text(
+      colour = "#dc9999",
+      family = "Calibri",
+      size = 8
+    ),
+    plot.title = element_text(
+      family = "Calibri",
+      hjust = 0.5,
+      size = 14
+    ),
+    axis.text = element_text(color = "white"),
+    axis.ticks.x = element_line(color = "white"),
+    panel.background = element_rect(fill = "grey"),
+    legend.position = "bottom",
+    legend.background = element_rect(fill = "black", color = "black"),
+    plot.background = element_rect(fill = "black", color = "black")
+  )
+
+grafico
+```
+
